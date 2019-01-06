@@ -1,0 +1,123 @@
+<!--A Design by W3layouts
+Author: W3layout
+Author URL: http://w3layouts.com
+License: Creative Commons Attribution 3.0 Unported
+License URL: http://creativecommons.org/licenses/by/3.0/
+-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Travlio a Travel Category Flat Bootstarp responsive Website Template | Home :: w3layouts</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="keywords" content="Travlio Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template,
+		Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
+		<script type="application/x-javascript">
+			addEventListener("load", function() {
+				setTimeout(hideURLbar, 0);
+			}, false);
+			function hideURLbar() {
+				window.scrollTo(0, 1);
+			}
+		</script>
+		
+		<!--구글맵 api키-->
+		
+		<script src="cordova.js"></script>
+		<!-- bootstarp-css -->
+		<link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
+		<!--// bootstarp-css -->
+		<!-- css -->
+		<link rel="stylesheet" href="css/style.css" type="text/css" media="all" />
+		<!--// css -->
+		<script src="js/jquery-1.11.1.min.js"></script>
+		<script src="js/modernizr.custom.js"></script>
+		<!---- start-smoth-scrolling---->
+		<script type="text/javascript" src="js/move-top.js"></script>
+		<script type="text/javascript" src="js/easing.js"></script>
+		<!-- 데이터베이스 스크립트 -->
+		<script src="dbHandle.js"></script>
+		<!-- 경로 추가하기 스크립트 -->
+		<script src="accountHandle.js"></script>
+		<!-- 스크립트 -->
+		<script src="imagepicker.js"></script>
+
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+		<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+		<style>
+			.modifyFic{
+				width: 70%;
+			}
+		</style>
+		
+		
+		<script>
+			$(document).ready(function() {
+				// DB 연결
+				openAccountDB();
+				createAccountTable();
+				uploadProfileData();
+			});
+			
+			function getPhoto(num) {
+				navigator.camera.getPicture(onPhotoURISuccess, onFail, {
+					quality : 50,
+					destinationType : Camera.DestinationType.FILE_URI,
+					sourceType : Camera.PictureSourceType.PHOTOLIBRARY
+				});
+			}
+
+			// 사진검색 성공콜백함수
+			function onPhotoURISuccess(imageURI) {
+				$('#displayProfileArea2').attr('src',imageURI);
+			}
+
+			// 사진촬영/검색 실패콜백함수
+			function onFail(message) {
+				alert('실패 : ' + message);
+			}
+			
+			function accountUpdate() {
+				updateAccountData();
+			}
+		</script>
+
+	</head>
+	<body>
+
+		<div id="detail1" class="contact-form">
+			<h3>프로필 수정하기</h3>
+			<p>
+				이름
+			</p>
+			<input id="getacoountName2" type="text"/>
+			<p>
+				직장
+			</p>
+			<input id="getacoountWork2" type="text"/>
+			<p>
+				거주지역
+			</p>
+			<input id="getacoountResidence2" type="text"/>
+			<p>
+				이메일
+			</p>
+			<input id="getacoountEmail2" type="text"/>
+			<p>
+				전화번호
+			</p>
+			<input id="getacoountPhone2" type="text"/>
+			<br/>
+			<br/>
+			<button onclick="getPhoto(1)">
+				사진변경하기
+			</button>
+			<input type="button" onclick="accountUpdate()" value="수정하기"/>
+			<br/>
+			<img id="displayProfileArea2" class="small-unit2 modifyFic" src=""/>
+		</div>
+
+	</body>
+</html>

@@ -1,0 +1,916 @@
+<!--A Design by W3layouts
+Author: W3layout
+Author URL: http://w3layouts.com
+License: Creative Commons Attribution 3.0 Unported
+License URL: http://creativecommons.org/licenses/by/3.0/
+-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Travlio a Travel Category Flat Bootstarp responsive Website Template | Home :: w3layouts</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="keywords" content="Travlio Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template,
+		Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
+		<script type="application/x-javascript">
+			addEventListener("load", function() {
+				setTimeout(hideURLbar, 0);
+			}, false);
+			function hideURLbar() {
+				window.scrollTo(0, 1);
+			}
+		</script>
+
+		<!--구글맵 api키-->
+		
+		<script src="cordova.js"></script>
+		<!-- bootstarp-css -->
+		<link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
+		<!--// bootstarp-css -->
+		<!-- css -->
+		<link rel="stylesheet" href="css/style.css" type="text/css" media="all" />
+		<!--// css -->
+		<script src="js/jquery-1.11.1.min.js"></script>
+		<script src="js/modernizr.custom.js"></script>
+		<!---- start-smoth-scrolling---->
+		<script type="text/javascript" src="js/move-top.js"></script>
+		<script type="text/javascript" src="js/easing.js"></script>
+		<!-- 데이터베이스 스크립트 -->
+		<script src="dbHandle.js"></script>
+		<!-- 경로 추가하기 스크립트 -->
+		<script src="addDeleteButton.js"></script>
+		<!-- 스크립트 -->
+		<script src="imagepicker.js"></script>
+
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+		<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+		<script type="text/javascript">
+			jQuery(document).ready(function($) {
+				$(".scroll").click(function(event) {
+					event.preventDefault();
+					$('html,body').animate({
+						scrollTop : $(this.hash).offset().top
+					}, 900);
+				});
+			});
+			// 데이터베이스 구현부분
+			$(document).ready(function() {
+				openDB();
+				createTable();
+				createTable2();
+
+				$("#clickme").click(function() {
+					var d = new Date();
+					saveGuestBook();
+					var dom = document.getElementById("output");
+					dom.innerHTML = "";
+					createVisitor();
+				});
+
+				$(".dataSave").click(function() {
+					saveData();
+				});
+
+				$(".dataTest").click(function() {
+					var title = $('#getTitle').val();
+					uploadTest(title);
+				});
+
+				$(".dataClear").click(function() {
+					deleteData();
+				});
+
+				$(".getPhoto").click(function() {
+					navigator.camera.getPicture(onPhotoURISuccess, onFail, {
+						quality : 50,
+						destinationType : Camera.DestinationType.FILE_URI,
+						sourceType : Camera.PictureSourceType.PHOTOLIBRARY
+					});
+				}, function(error) {
+					alert('Error: ' + error);
+				});
+			});
+
+			// 사진검색 성공콜백함수
+			function onPhotoURISuccess(imageURI) {
+				var name = "#displayArea" + photoNum;
+				$(name).attr('src', imageURI);
+
+				photoNum++;
+
+				if (photoNum > 5) {
+					$(name).css('display', 'inline');
+				}
+			}
+
+			// 사진촬영/검색 실패콜백함수
+			function onFail(message) {
+				alert('실패 : ' + message);
+			}
+
+			// 사진저장 성공시 실행될 함수
+			function saveSuccess() {
+				var saveCount = 6;
+				while (saveCount < 31) {// 게시물이 30개까지 업로드 가능한 경
+					var saveName = "#displayArea" + saveCount;
+					$(saveName).css('display', 'none');
+					saveCount++;
+				}
+				saveCount = 6;
+			}
+
+		</script>
+
+		<script>
+			function initMap() {
+				document.getElementById('floating-panel').style.display = "block";
+				var directionsDisplay = new google.maps.DirectionsRenderer;
+				var directionsService = new google.maps.DirectionsService;
+
+				var map = new google.maps.Map(document.getElementById('mapArea'), {
+					zoom : 14,
+					center : {
+						lat : 37.77,
+						lng : -122.447
+					}
+				});
+
+				directionsDisplay.setMap(map);
+
+				calculateAndDisplayRoute(directionsService, directionsDisplay);
+
+				document.getElementById('mode').addEventListener('change', function() {
+
+					calculateAndDisplayRoute(directionsService, directionsDisplay);
+				});
+			}
+
+			function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+
+				var selectedMode = document.getElementById('mode').value;
+				var waypts = [];
+				var start = document.getElementById('start').value;
+				var end = document.getElementById('end').value;
+
+				for ( i = 1; i <= cnt; i++) {
+					var path = document.getElementById('path' + i).value;
+					waypts.push({
+						location : path,
+					});
+				}
+
+				console.log(waypts[0]);
+
+				directionsService.route({
+
+					origin : start, // Haight.
+					destination : end, // Ocean Beach.
+					waypoints : waypts,
+					optimizeWaypoints : true,
+					// Note that Javascript allows us to access the constant
+					// using square brackets and a string value as its
+					// "property."
+					travelMode : google.maps.TravelMode[selectedMode]
+				}, function(response, status) {
+					if (status == 'OK') {
+						directionsDisplay.setDirections(response);
+					} else {
+						//window.alert('Directions request failed due to ' + status);
+					}
+				});
+			}
+		</script>
+
+		<script>
+			var photoNum = 1;
+			var firstNum;
+			var secondCount;
+
+			function initCordova() {
+				initCordova();
+				document.addEventListener('deviceready', onDeviceReady, true);
+			}
+
+			function onDeviceReady() {
+				navigator.notification.alert('장치 준비됨', null, '코르도바 API');
+			}
+
+			// 사진 촬영 검색
+			function getPhoto(num) {
+				navigator.camera.getPicture(onPhotoURISuccess, onFail, {
+					quality : 50,
+					destinationType : Camera.DestinationType.FILE_URI,
+					sourceType : Camera.PictureSourceType.PHOTOLIBRARY
+				});
+				if (firstNum != num) {// 다른 지역추가에서 사진클릭을 했을 경우
+					firstNum = num;
+					secondCount = 1;
+				}
+			}
+
+			// 사진검색 성공콜백함수
+			function onPhotoURISuccess(imageURI) {
+				var getName = "#displayArea" + firstNum + "_" + secondCount;
+				$(getName).attr('src', imageURI);
+				$(getName).css('display', 'inline');
+				secondCount++;
+			}
+
+			// 사진촬영/검색 실패콜백함수
+			function onFail(message) {
+				//alert('실패 : ' + message);
+			}
+
+		</script>
+		<!-- fotorama CDN 설정 추가 -->
+		<link href="http://cdnjs.cloudflare.com/ajax/libs/fotorama/4.5.1/fotorama.css" rel="stylesheet">
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/fotorama/4.5.1/fotorama.js"></script>
+
+		<style>
+			.small-unit {
+				float: left;
+				width: 19%;
+				height: 60px;
+				margin: 1px;
+			}
+			#BoxModel {
+				background: #AEC8EB;
+				padding-left: 20px;
+				padding-right: 20px;
+				height: 38px;
+				width: 32%;
+				color: white;
+			}
+			.BoxModel {
+				background: #AEC8EB;
+				padding-left: 20px;
+				padding-right: 20px;
+				height: 38px;
+				width: 98%;
+				color: white;
+			}
+			.BoxModel2 {
+				background: #AEC8EB;
+				padding-left: 20px;
+				padding-right: 20px;
+				height: 38px;
+				width: 32%;
+				color: white;
+			}
+			.BoxModel3 {
+				background: #AEC8EB;
+				padding-left: 20px;
+				padding-right: 20px;
+				height: 38px;
+				width: 49%;
+				color: white;
+			}
+			#labelStyle {
+				width: 99%;
+			}
+			#mapArea {
+				width: 100%;
+				height: 330px;
+			}
+			#floating-panel {
+				position: absolute;
+				z-index: 5;
+				background-color: #fff;
+				padding: 5px;
+				border: 1px solid #999;
+				text-align: center;
+				font-family: 'Roboto', 'sans-serif';
+				line-height: 30px;
+				padding-left: 10px;
+			}
+		</style>
+
+	</head>
+	<!-- header-top -->
+	<div class="header-top">
+		<!-- container -->
+		<div class="container">
+			<div class="header-top-left">
+				<div class="signin">
+					<a href="#small-dialog2" class="play-icon popup-with-zoom-anim">Register</a>
+					<!-- pop-up-box -->
+					<script type="text/javascript" src="js/modernizr.custom.min.js"></script>
+					<link href="css/popuo-box.css" rel="stylesheet" type="text/css" media="all">
+					<script src="js/jquery.magnific-popup.js" type="text/javascript"></script>
+					<!--//pop-up-box -->
+					<div id="small-dialog2" class="mfp-hide">
+						<h3>Create Account</h3>
+						<div class="signup">
+							<form>
+								<input type="text" class="email" placeholder="Mobile Number" maxlength="10" pattern="[1-9]{1}\d{9}" title="Enter a valid mobile number">
+							</form>
+							<div class="continue-button">
+								<a href="#small-dialog3" class="hvr-shutter-out-horizontal play-icon popup-with-zoom-anim">Continue</a>
+							</div>
+							<div class="button-bottom">
+								<p>
+									Already have an account? <a href="#small-dialog" class="play-icon popup-with-zoom-anim">Login</a>
+								</p>
+							</div>
+						</div>
+						<div class="clearfix"></div>
+					</div>
+					<div id="small-dialog3" class="mfp-hide">
+						<h3>Create Account</h3>
+						<div class="signup">
+							<form>
+								<input type="text" class="email" placeholder="Email" required="required" pattern="([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?" title="Enter a valid email">
+								<input type="password" placeholder="Password" required="required" pattern=".{6,}" title="Minimum 6 characters required" autocomplete="off">
+								<input type="text" class="email" placeholder="Re Enter Mobile Number" maxlength="10" pattern="[1-9]{1}\d{9}" title="Enter a valid mobile number">
+								<input type="submit" value="Sign Up">
+							</form>
+						</div>
+						<div class="clearfix"></div>
+					</div>
+					<div id="small-dialog4" class="mfp-hide">
+						<h3>Feedback</h3>
+						<div class="feedback-grids">
+							<div class="feedback-grid">
+								<p>
+									Suspendisse tristique magna ut urna pellentesque, ut egestas velit faucibus. Nullam mattis lectus ullamcorper dui dignissim, sit amet egestas orci ullamcorper.
+								</p>
+							</div>
+							<div class="button-bottom">
+								<p>
+									<a href="#small-dialog" class="play-icon popup-with-zoom-anim">Sign in</a> to get started.
+								</p>
+							</div>
+						</div>
+					</div>
+					<script>
+						$(document).ready(function() {
+							$('.popup-with-zoom-anim').magnificPopup({
+								type : 'inline',
+								fixedContentPos : false,
+								fixedBgPos : true,
+								overflowY : 'auto',
+								closeBtnInside : true,
+								preloader : false,
+								midClick : true,
+								removalDelay : 300,
+								mainClass : 'my-mfp-zoom-in'
+							});
+
+						});
+					</script>
+				</div>
+				<div class="signin">
+					<a href="#small-dialog" class="play-icon popup-with-zoom-anim">Sign In</a>
+					<div id="small-dialog" class="mfp-hide">
+						<h3>Login</h3>
+						<div class="signup">
+							<form>
+								<input type="text" class="email" placeholder="Enter email / mobile" required="required" pattern="([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?">
+								<input type="password" placeholder="Password" required="required" pattern=".{6,}" title="Minimum 6 characters required" autocomplete="off">
+								<input type="submit" value="Login">
+							</form>
+							<div class="forgot">
+								<a href="#">forgot password ?</a>
+							</div>
+							<div class="button-bottom">
+								<p>
+									New account? <a href="#small-dialog2" class="play-icon popup-with-zoom-anim">Sign up</a>
+								</p>
+							</div>
+						</div>
+						<div class="clearfix"></div>
+					</div>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+		</div>
+		<!-- //container -->
+	</div>
+	<!-- //header-top -->
+	<!-- banner -->
+	<div class="banner">
+		<!-- container -->
+		<div class="container">
+			<div class="top-nav">
+				<span class="menu">MENU</span>
+				<ul class="nav1">
+					<li><a href="index.html">Home</a></li>
+					<li><a href="planWatch.html">My Plan</a></li>
+					<li><a href="TripSave.html" class="active">Trip Save</a></li>
+					<li><a href="MyTrip.html">My Trip</a></li>
+				</ul>
+				<!-- script-for-menu -->
+				<script>
+					$("span.menu").click(function() {
+						$("ul.nav1").slideToggle(300, function() {//메뉴 클릭시 바 내려오는 속도
+							// Animation complete.
+						});
+					});
+				</script>
+				<!-- /script-for-menu -->
+			</div>
+			<div class="banner-grids">
+				<div class="banner-left">
+					<h1><a href="index.html">MyTripAid</a></h1>
+					<br/>
+					<p>
+						여행을 한눈에 계획하고! 저장하고!
+					</p>
+				</div>
+				<div class="banner-right">
+					<script src="js/responsiveslides.min.js"></script>
+					<script>
+						// You can also use "$(window).load(function() {"
+						$(function() {
+							// Slideshow 4
+							$("#slider3").responsiveSlides({
+								auto : true,
+								pager : true,
+								nav : false,
+								speed : 500,
+								namespace : "callbacks",
+								before : function() {
+									$('.events').append("<li>before event fired.</li>");
+								},
+								after : function() {
+									$('.events').append("<li>after event fired.</li>");
+								}
+							});
+
+						});
+					</script>
+					<div  id="top" class="callbacks_container">
+						<ul class="rslides" id="slider3">
+							<li>
+								<div class="banner-right-info">
+									<h2>당신의 여행을 저장하세요!</h2>
+									<p>
+										혹시 여행을 다녀왔는데 사진정리하기 귀찮은적 있으신가요?
+										<br/>
+										MyTripAid는 당신의 아름다운 여행의 추억을 쉽고
+										<br/>
+										보기좋게 저장해드립니다!
+									</p>
+								</div>
+							</li>
+							<li>
+								<div class="banner-right-info">
+									<h2>당신의 여행을 계획하세요!</h2>
+									<p>
+										혹시 여행 계획을 세울때 어려움을 겪어보신적 있으신가요?
+										<br/>
+										MyTripAid는 당신의 여행을 더욱 쉽게 계획해드립니다!
+									</p>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+		</div>
+		<!-- //container -->
+	</div>
+	<!-- contact -->
+	<div class="contact">
+		<div class="container">
+			<div class="contact-info">
+				<h2>여행저장하기</h2>
+			</div>
+
+			<div class="contact-form">
+				<h4>My Trip</h4>
+
+				<p>
+					제목
+				</p>
+				<input id="titleData" type="text"/>
+				<p>
+					코멘트
+				</p>
+				<textarea id="commentData" type="text"></textarea>
+				<p>
+					여행지
+				</p>
+				<input id="destinationData" type="text"/>
+				<p>
+					일정
+				</p>
+				<input id="schedule" type="text"/>
+
+				<p>
+					여행경비
+				</p>
+				<input id="money" type="text"/>
+				<br/>
+
+				<div id="box3" class="ui-bar ui-bar-a">
+					<label for="strtext" id="labelStyle">출발지</label>
+					<input type="text" id="start">
+					<br/>
+					<button id="addPath" class="BoxModel3" onclick="addPath1();" >
+						경로추가
+					</button>
+					<input onclick="getPhoto(1)" type="button" class="BoxModel3" value="사진추가">
+					<br/>
+
+					<img style="display: none;" id="displayArea1_1" class="small-unit" src=""/>
+					<img style="display: none;" id="displayArea1_2" class="small-unit" src=""/>
+					<img style="display: none;" id="displayArea1_3" class="small-unit" src=""/>
+					<img style="display: none;" id="displayArea1_4" class="small-unit" src=""/>
+					<img style="display: none;" id="displayArea1_5" class="small-unit" src=""/>
+					<img style="display: none;" id="displayArea1_6" class="small-unit" src=""/>
+					<img style="display: none;" id="displayArea1_7" class="small-unit" src=""/>
+					<img style="display: none;" id="displayArea1_8" class="small-unit" src=""/>
+					<img style="display: none;" id="displayArea1_9" class="small-unit" src=""/>
+					<img style="display: none;" id="displayArea1_10" class="small-unit" src=""/>
+					<br/>
+
+					<div id="pathContent1" style="display : none">
+						<label for="strtext" id="labelStyle">경유지1 : </label>
+						<input type="text" id="path1">
+						<br/>
+						<button onclick="addPath2();" class="BoxModel2">
+							경로추가
+						</button>
+						<button onclick="deletePath2();" class="BoxModel2">
+							경로삭제
+						</button>
+						<button onclick="getPhoto(2)" class="BoxModel2">
+							사진추가
+						</button>
+						<img style="display: none;" id="displayArea2_1" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea2_2" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea2_3" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea2_4" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea2_5" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea2_6" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea2_7" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea2_8" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea2_9" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea2_10" class="small-unit" src=""/>
+						<br/>
+						<br/>
+					</div>
+
+					<div id="pathContent2" style="display : none">
+						<label for="strtext" id="labelStyle">경유지2 : </label>
+						<input type="text" id="path2">
+						<br/>
+						<button onclick="addPath3();" class="BoxModel2">
+							경로추가
+						</button>
+						<button onclick="deletePath3();" class="BoxModel2">
+							경로삭제
+						</button>
+						<button onclick="getPhoto(3)" class="BoxModel2">
+							사진추가
+						</button>
+						<img style="display: none;" id="displayArea3_1" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea3_2" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea3_3" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea3_4" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea3_5" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea3_6" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea3_7" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea3_8" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea3_9" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea3_10" class="small-unit" src=""/>
+						<br/>
+						<br/>
+					</div>
+
+					<div id="pathContent3" style="display : none">
+						<label for="strtext" id="labelStyle">경유지3 : </label>
+						<input type="text" id="path3">
+						<br/>
+						<button onclick="addPath4();" class="BoxModel2">
+							경로추가
+						</button>
+						<button onclick="deletePath4();" class="BoxModel2">
+							경로삭제
+						</button>
+						<button onclick="getPhoto(4)" class="BoxModel2">
+							사진추가
+						</button>
+						<img style="display: none;" id="displayArea4_1" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea4_2" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea4_3" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea4_4" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea4_5" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea4_6" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea4_7" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea4_8" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea4_9" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea4_10" class="small-unit" src=""/>
+						<br/>
+						<br/>
+					</div>
+
+					<div id="pathContent4" style="display : none">
+						<label for="strtext" id="labelStyle">경유지4 : </label>
+						<input type="text" id="path4">
+						<br/>
+						<button onclick="addPath5();" class="BoxModel2">
+							경로추가
+						</button>
+						<button onclick="deletePath5();" class="BoxModel2">
+							경로삭제
+						</button>
+						<button onclick="getPhoto(5)" class="BoxModel2">
+							사진추가
+						</button>
+						<img style="display: none;" id="displayArea5_1" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea5_2" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea5_3" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea5_4" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea5_5" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea5_6" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea5_7" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea5_8" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea5_9" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea5_10" class="small-unit" src=""/>
+						<br/>
+						<br/>
+					</div>
+
+					<div id="pathContent5" style="display : none">
+						<label for="strtext" id="labelStyle">경유지5 : </label>
+						<input type="text" id="path5">
+						<br/>
+						<button onclick="addPath6();" class="BoxModel2">
+							경로추가
+						</button>
+						<button onclick="deletePath6();" class="BoxModel2">
+							경로삭제
+						</button>
+						<button onclick="getPhoto(6)" class="BoxModel2">
+							사진추가
+						</button>
+						<img style="display: none;" id="displayArea6_1" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea6_2" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea6_3" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea6_4" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea6_5" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea6_6" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea6_7" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea6_8" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea6_9" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea6_10" class="small-unit" src=""/>
+						<br/>
+						<br/>
+					</div>
+
+					<div id="pathContent6" style="display : none">
+						<label for="strtext" id="labelStyle">경유지6 : </label>
+						<input type="text" id="path6">
+						<br/>
+						<button onclick="addPath7();" class="BoxModel2">
+							경로추가
+						</button>
+						<button onclick="deletePath7();" class="BoxModel2">
+							경로삭제
+						</button>
+						<button onclick="getPhoto(7)" class="BoxModel2">
+							사진추가
+						</button>
+						<img style="display: none;" id="displayArea7_1" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea7_2" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea7_3" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea7_4" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea7_5" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea7_6" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea7_7" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea7_8" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea7_9" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea7_10" class="small-unit" src=""/>
+						<br/>
+						<br/>
+					</div>
+
+					<div id="pathContent7" style="display : none">
+						<label for="strtext" id="labelStyle">경유지7 : </label>
+						<input type="text" id="path7">
+						<br/>
+						<button onclick="addPath8();" class="BoxModel2">
+							경로추가
+						</button>
+						<button onclick="deletePath8();" class="BoxModel2">
+							경로삭제
+						</button>
+						<button onclick="getPhoto(8)" class="BoxModel2">
+							사진추가
+						</button>
+						<img style="display: none;" id="displayArea8_1" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea8_2" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea8_3" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea8_4" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea8_5" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea8_6" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea8_7" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea8_8" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea8_9" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea8_10" class="small-unit" src=""/>
+						<br/>
+						<br/>
+					</div>
+
+					<div id="pathContent8" style="display : none">
+						<label for="strtext" id="labelStyle">경유지8 : </label>
+						<input type="text" id="path8">
+						<br/>
+						<button onclick="addPath9();" class="BoxModel2">
+							경로추가
+						</button>
+						<button onclick="deletePath9();" class="BoxModel2">
+							경로삭제
+						</button>
+						<button onclick="getPhoto(9)" class="BoxModel2">
+							사진추가
+						</button>
+						<img style="display: none;" id="displayArea9_1" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea9_2" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea9_3" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea9_4" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea9_5" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea9_6" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea9_7" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea9_8" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea9_9" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea9_10" class="small-unit" src=""/>
+						<br/>
+						<br/>
+					</div>
+
+					<div id="pathContent9" style="display : none">
+						<label for="strtext" id="labelStyle">경유지9 : </label>
+						<input type="text" id="path9">
+						<br/>
+						<button onclick="addPath10();" class="BoxModel2">
+							경로추가
+						</button>
+						<button onclick="deletePath10();" class="BoxModel2">
+							경로삭제
+						</button>
+						<button onclick="getPhoto(10)" class="BoxModel2">
+							사진추가
+						</button>
+						<img style="display: none;" id="displayArea10_1" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea10_2" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea10_3" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea10_4" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea10_5" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea10_6" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea10_7" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea10_8" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea10_9" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea10_10" class="small-unit" src=""/>
+						<br/>
+						<br/>
+					</div>
+
+					<div id="pathContent10" style="display : none">
+						<label for="strtext" id="labelStyle">경유지10 : </label>
+						<input type="text" id="path10">
+						<br/>
+						<button onclick="deletePath11();" class="BoxModel3">
+							경로삭제
+						</button>
+						<button onclick="getPhoto(11)" class="BoxModel3">
+							사진추가
+						</button>
+						<img style="display: none;" id="displayArea11_1" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea11_2" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea11_3" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea11_4" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea11_5" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea11_6" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea11_7" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea11_8" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea11_9" class="small-unit" src=""/>
+						<img style="display: none;" id="displayArea11_10" class="small-unit" src=""/>
+						<br/>
+						<br/>
+					</div>
+					<br/>
+					<label for="strtext" id="labelStyle">도착지</label>
+					<input type="text" id="end">
+					<button onclick="getPhoto(12)" class="BoxModel">
+						사진추가
+					</button>
+					<img style="display: none;" id="displayArea12_1" class="small-unit" src=""/>
+					<img style="display: none;" id="displayArea12_2" class="small-unit" src=""/>
+					<img style="display: none;" id="displayArea12_3" class="small-unit" src=""/>
+					<img style="display: none;" id="displayArea12_4" class="small-unit" src=""/>
+					<img style="display: none;" id="displayArea12_5" class="small-unit" src=""/>
+					<img style="display: none;" id="displayArea12_6" class="small-unit" src=""/>
+					<img style="display: none;" id="displayArea12_7" class="small-unit" src=""/>
+					<img style="display: none;" id="displayArea12_8" class="small-unit" src=""/>
+					<img style="display: none;" id="displayArea12_9" class="small-unit" src=""/>
+					<img style="display: none;" id="displayArea12_10" class="small-unit" src=""/>
+					<br/>
+					<br/>
+				</div>
+
+				<!--지도 설정 부분-->
+				<div id="floating-panel" style="display : none;">
+					<b>Mode of Travel: </b>
+					<select id="mode">
+						<option value="DRIVING">Driving</option>
+						<option value="WALKING">Walking</option>
+						<option value="BICYCLING">Bicycling</option>
+						<option value="TRANSIT">Transit</option>
+					</select>
+				</div>
+
+				<br/>
+				<br/>
+
+				<input onclick="initMap();" type="button" class="BoxModel" value="경로 맵 표시">
+				<br/>
+				<div id="mapArea"></div>
+				<br/>
+				<input type="button" id="" class="dataSave BoxModel3" value="데이터저장"/>
+				<input type="button" id="" class="dataClear BoxModel3" value="DB초기화"/>
+				<br/>
+			</div>
+		</div>
+	</div>
+	<!-- footer -->
+	<div class="footer">
+		<!-- container -->
+		<div class="container">
+			<div class="footer-top">
+				<div class="footer-grids">
+					<div class="col-md-3 footer-logo">
+						<a href="index.html">Travlio</a>
+					</div>
+					<div class="col-md-3 f-address">
+						<h5>Address</h5>
+						<ul>
+							<li>
+								756 gt globel Place,
+							</li>
+							<li>
+								CD-Road,M 07 435.
+							</li>
+							<li>
+								Telephone: +1 234 567 9871
+							</li>
+							<li>
+								FAX: +1 234 567 9871
+							</li>
+							<li>
+								E-mail : <a href="mailto:example@email.com">Example@mail.com</a>
+							</li>
+						</ul>
+					</div>
+					<div class="col-md-6 f-address f-contact">
+						<h5>Stay in Touch</h5>
+						<form>
+							<input type="text" placeholder="Email address" required="">
+							<input type="submit" value="Subscribe">
+						</form>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+				<div class="footer-bottom">
+					<div class="footer-nav">
+						<ul>
+							<li>
+								<a href="index.html" class="active">Home</a>
+							</li>
+							<li>
+								<a href="about.html">About</a>
+							</li>
+							<li>
+								<a href="services.html">Services</a>
+							</li>
+							<li>
+								<a href="typography.html">Typography</a>
+							</li>
+							<li>
+								<a href="index.html">News</a>
+							</li>
+							<li>
+								<a href="contact.html">Contact</a>
+							</li>
+						</ul>
+					</div>
+					<div class="copyright">
+						<p>
+							Copyrights © 2015 Travlio . Design by <a href="http://w3layouts.com/">W3layouts</a>
+						</p>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+			</div>
+		</div>
+		<!-- //container -->
+	</div>
+	<!-- //footer -->
+
+	</body>
+</html>
